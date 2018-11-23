@@ -1,7 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#pragma once
 
-#include <stddef.h>
 #include <stdlib.h>
 	
 	typedef struct List {
@@ -11,6 +9,7 @@
         } List;
 	
         extern List makelist(register size_t length);
-        extern void placelist(size_t index, List* list, size_t size, void* data);
-	
-#endif
+        extern char placelist(register size_t index, List* list, register size_t size, void* data);
+        /*^ 'size' can be used as ID instead */
+        extern void* rmlist(register size_t index, List* list);
+        extern char pushlist(register size_t index, List* list, register size_t size, void* data);
