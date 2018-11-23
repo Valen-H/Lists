@@ -40,7 +40,7 @@ install: lib$(targ).so
 clean: *.o
 	rm *.o
 
-fix: *
+fix: FORCE
 	chmod 775 *
 
 firstinst: FORCE
