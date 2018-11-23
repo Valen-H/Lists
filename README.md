@@ -15,15 +15,15 @@ placelist(3, &list, sizeof("10"), (void*)"10"); /* Resizes the array pointer to 
 int i = 10;
 void* ip = &i;
 pushlist(2, &list, sizeof(i), ip); /* Same as 'placelist' but instead of overriding the data, it pushes all items after the index one slot to the right. */
-printf("%s", (char*)list.data[3]);
+printf("%s", (char*)list.data[4]); /* 12 */
 rmlist(3, &list); /* Removes item at specified index, shifts all items after the index one slot left and returns the removed item pointer. */
-/* rmlist(tegister size_t index, List* list) */
+/* extern rmlist(tegister size_t index, List* list) */
 
-/*
+/**
 	typedef struct List {
 		size_t length;
 		size_t* lengths; /* Size of each item */
 		void** data; /* Each item... */
-	}
+	} List;
 */
 ```  
