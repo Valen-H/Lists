@@ -16,20 +16,25 @@ extern char placelist(register size_t index, List* list, register size_t size, v
 		void** ttmp = (void**)realloc(list->data, (index + 1) * sizeof(void*));
 		
 		if (tmp == NULL || ttmp == NULL) {
+			free(tmp);
+			free(ttmp);
 			return -1;
+		}
+		
+		register size_t plen = list->length;
+		
+		for (; plen < index + 1; plen++) {
+			list->lengths[plen] = 0;
+			void* tm = (void*)(list->data[plen]);
+			tm = NULL;
 		}
 		
 		free(list->lengths);
 		free(list->data);
-		register size_t plen = list->length;
 		list->length = index + 1;
 		list->lengths = tmp;
 		list->data = ttmp;
 		
-		for (; plen < list->length; plen++) {
-			list->lengths[plen] = 0;
-			list->data[plen] = NULL;
-		}
 	}
 	
 	char** restrict to = (char**)(list->data + index);
@@ -47,7 +52,8 @@ extern void* rmlist(register size_t index, List* list) {
 			list->data[index] = list->data[index + 1];
 			list->lengths[index] = list->lengths[index + 1];
 		} else {
-			list->data[index] = NULL;
+			char* tm = (char*)(list->data[index]);
+			tm = NULL;
 			list->lengths[index] = 0;
 		}
 	}
@@ -65,6 +71,8 @@ extern char pushlist(register size_t index, List* list, size_t size, void* data)
 	void** ttmp = (void**)realloc(list->data, sizeof(void*) * (list->length + 1));
 	
 	if (tmp == NULL || ttmp == NULL) {
+		free(tmp);
+		free(ttmp);
 		return -1;
 	}
 	

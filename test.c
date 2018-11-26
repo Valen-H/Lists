@@ -16,4 +16,3 @@ int main() {
 	printf("placelist(4,,%lu,14u).\nlength: %lu\nlengths[4]: %lub\ndata[4]: %uu\n", sizeof(i), list.length, list.lengths[4], *(unsigned int*)list.data[4]);
 	printf("rmlist(3): %p.\nlength: %lu\ndata[3]: %uu\ndata[4]: %p\nlengths[3]: %zu\n\n", rmlist(3, &list), list.length, *(unsigned int*)list.data[3], list.data[4], list.lengths[3]);
 }
-
