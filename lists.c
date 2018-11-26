@@ -25,8 +25,7 @@ extern char placelist(register size_t index, List* list, register size_t size, v
 		
 		for (; plen < index + 1; plen++) {
 			list->lengths[plen] = 0;
-			void* tm = (void*)(list->data[plen]);
-			tm = NULL;
+			list->data[plen] = NULL;
 		}
 		
 		free(list->lengths);
@@ -52,8 +51,7 @@ extern void* rmlist(register size_t index, List* list) {
 			list->data[index] = list->data[index + 1];
 			list->lengths[index] = list->lengths[index + 1];
 		} else {
-			char* tm = (char*)(list->data[index]);
-			tm = NULL;
+			list->data[index] = NULL;
 			list->lengths[index] = 0;
 		}
 	}
