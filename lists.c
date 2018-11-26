@@ -1,6 +1,6 @@
 #include "lists.h"
 
-extern List makelist(register size_t length) {
+extern List makelist(const register size_t length) {
 	List list;
 	list.length = length;
 	list.lengths = (size_t*)calloc(list.length, sizeof(size_t));
@@ -9,7 +9,7 @@ extern List makelist(register size_t length) {
 	return list;
 }
 
-extern char placelist(register size_t index, List* list, register size_t size, void* data) {
+extern char placelist(register size_t index, List* const list, const register size_t size, const void* const data) {
 	if (index >= list->length) {
 		
 		size_t* tmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
@@ -43,7 +43,7 @@ extern char placelist(register size_t index, List* list, register size_t size, v
 	return 0;
 }
 
-extern void* rmlist(register size_t index, List* list) {
+extern void* rmlist(register size_t index, List* const list) {
 	void* ret = list->data[index];
 	
 	for (; index < list->length; index++) {
@@ -63,7 +63,7 @@ extern void* rmlist(register size_t index, List* list) {
 	return ret;
 }
 
-extern char pushlist(register size_t index, List* list, size_t size, void* data) {
+extern char pushlist(register size_t index, List* const list, const size_t size, const void* const data) {
 	
 	size_t* tmp = (size_t*)realloc(list->lengths, sizeof(size_t) * (list->length + 1));
 	void** ttmp = (void**)realloc(list->data, sizeof(void*) * (list->length + 1));

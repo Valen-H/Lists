@@ -8,8 +8,8 @@
         	void** data;
         } List;
 	
-        extern List makelist(register size_t length);
-        extern char placelist(register size_t index, List* list, register size_t size, void* data);
+        extern List makelist(const register size_t length);
+        extern char placelist(register size_t index, List* const list, const register size_t size, const void* const data);
         /*^ 'size' can be used as ID instead */
-        extern void* rmlist(register size_t index, List* list);
-        extern char pushlist(register size_t index, List* list, register size_t size, void* data);
+        extern void* rmlist(register size_t index, List* const list);
+        extern char pushlist(register size_t index, List* const list, const register size_t size, const void* const data);
