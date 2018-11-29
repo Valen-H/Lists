@@ -1,4 +1,5 @@
 #include "lists.h"
+#include <stdbool.h>
 
 extern List makelist(const register size_t length) {
 	List list;
@@ -86,4 +87,30 @@ extern char pushlist(register size_t index, List* const list, const size_t size,
 	}
 	
 	return placelist(index, list, size, data);
+}
+
+extern void singlify(List* const list) {
+	
+	void** ndata = (void**)calloc(list->length, sizeof(void*));
+	register size_t nsize = 0;
+	size_t* nlen = (size_t*)calloc(list->length, sizeof(size_t));
+	
+	for (register size_t i = 0; i < list->length; i++) {
+		bool pass = true;
+		for (register size_t ii = 0; ii < nsize; ii++) {
+			if (ndata[ii] == list->data[i]) {
+				pass = false;
+				break;
+			}
+		}
+		if (pass) {
+			ndata[nsize] = list->data[i];
+			nlen[nsize++] = list->lengths[i];
+		}
+	}
+	ndata = (void**)realloc(ndata, nsize * sizeof(void*));
+	nlen = (size_t*)realloc(nlen, nsize * sizeof(size_t));
+	list->data = ndata;
+	list->length = nsize;
+	list->lengths = nlen;
 }

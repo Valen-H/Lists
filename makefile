@@ -6,6 +6,7 @@ CFLAGS=-fPIE
 ARFLAGS=rcs
 targ=$(shell basename $$PWD)
 DEPS=$(targ).h
+TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
 LIB=/data/data/com.termux/files/usr/lib
@@ -26,7 +27,7 @@ lib$(targ).a: $(targ).o
 	$(AR) $(ARFLAGS) $@ $^
 
 $(TEST).o: $(TEST).c $(targ).o
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(TSTFLAGS)
 
 #$(targ): $(BINR) $(targ).o
 #	$(CC) $(CFLAGS) $(BINR) -o $@ -L./ -l$(targ)
