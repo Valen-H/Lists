@@ -11,7 +11,7 @@ LINKS=
 TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
-LIB=/data/data/com.termux/files/usr/lib
+LIB=/usr/lib
 INC=$(LIB)/../include
 BIN=$(LIB)/../bin
 
