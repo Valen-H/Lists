@@ -11,7 +11,11 @@ LINKS=
 TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
-LIB=$(PREFIX)/usr/lib
+ifeq ($(OS), Windows_NT)
+	LIB=/usr/lib
+else
+	LIB=$(PREFIX)/lib
+endif
 INC=$(LIB)/../include
 BIN=$(LIB)/../bin
 
