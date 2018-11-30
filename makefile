@@ -39,7 +39,7 @@ install: lib$(targ).so
 	#install -m 755 $(targ) $(BIN)
 
 clean: *.o
-	rm *.o
+	rm *.o *.so *.a
 
 fix: FORCE
 	chmod 775 *
