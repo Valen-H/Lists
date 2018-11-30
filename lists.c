@@ -117,3 +117,12 @@ extern void singlify(List* const list) {
 	list->length = nsize;
 	list->lengths = nlen;
 }
+
+extern size_t scanindex(const void* const ptr, const List* const list) {
+	
+	for (register size_t i = 0; i < list->length; i++) {
+		if (list->data[i] == ptr) return i;
+	}
+	
+	return -1;
+}
