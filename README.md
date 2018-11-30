@@ -18,8 +18,10 @@ pushlist(2, &list, sizeof(i), ip); /* Same as 'placelist' but instead of overrid
 printf("%s", (char*)list.data[4]); /* 12 */
 rmlist(3, &list); /* Removes item at specified index, shifts all items after the index one slot left and returns the removed item pointer. */
 /* extern void* rmlist(register size_t index, List* list) */
-scanindex(ip, &list); /* index of first occurence of 'ip' */
+scanindex(ip, &list); /* index of first occurence of 'ip'. */
 /* extern size_t scanindex(const void * const data, const List * const list) */
+printf("%s", printlist(&list)); /* print the list. */
+/* extern char* printlist(const List* const list)  */
 
 /**
 	typedef struct List {
@@ -29,3 +31,5 @@ scanindex(ip, &list); /* index of first occurence of 'ip' */
 	} List;
 */
 ```  
+
+> **Make sure to always deallocate all outputs!**  
