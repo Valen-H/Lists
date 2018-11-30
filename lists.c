@@ -1,5 +1,6 @@
 #include "lists.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 extern List makelist(const register size_t length) {
 	List list;
@@ -80,10 +81,12 @@ extern char pushlist(register size_t index, List* const list, const size_t size,
 	free(list->data);
 	list->data = ttmp;
 	list->lengths = tmp;
-	
-	for (register size_t i = list->length - 2; i >= index; i--) {
-		list->data[i + 1] = list->data[i];
-		list->lengths[i + 1] = list->lengths[i];
+
+	if (list->length > 1) {
+		for (register signed long int i = list->length - 2; i >= index; i--) {
+			list->data[i + 1] = list->data[i];
+			list->lengths[i + 1] = list->lengths[i];
+		}
 	}
 	
 	return placelist(index, list, size, data);
