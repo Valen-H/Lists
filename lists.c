@@ -1,6 +1,56 @@
 #include "lists.h"
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdint.h>
+
+static size_t intlen(signed long int value) {
+	size_t l = !value;
+	
+	while (value >= 1) {
+		l++;
+		value /= 10;
+	}
+	
+	return l;
+}
+
+/*static char* dechex(signed long int num) {
+	size_t len = intlen(num);
+	char* ret = (char*)calloc(len + 3, sizeof(char));
+	sprintf(ret, "0x%lx", num);
+	return ret;
+}*/
+
+static size_t hexsize(const void* const ptr) {
+	char* ret = (char*)calloc(30, sizeof(char));
+	register size_t i;
+	
+	sprintf(ret, "%p", ptr);
+	
+	for (i = 0; i < 30; i++) {
+		if (ret[i] == '\0') break;
+	}
+	
+	free(ret);
+	
+	return i;
+}
+
+extern char* printlist(const List* const list) {
+	char* tmp = (char*)calloc(intlen(SIZE_MAX) * 3 + hexsize(list) + 11, sizeof(char)),
+		* ret = (char*)calloc(intlen(SIZE_MAX) * 3 + hexsize(list) + 11, sizeof(char) * list->length);
+		
+	for (register size_t i = 0; i < list->length; i++) {
+		sprintf(tmp, "%lu,%lu: %p (%lu) - \n", i, list->ids[i], list->data[i], list->lengths[i]);
+		strcat(ret, tmp);
+	}
+	
+	free(tmp);
+	
+	return ret;
+}
 
 extern List makelist(const register size_t length) {
 	List list;
@@ -12,11 +62,11 @@ extern List makelist(const register size_t length) {
 	return list;
 }
 
-extern char placelist(register size_t index, List* const list, const register size_t size, const void* const data) {
+extern signed char placelist(register size_t index, List* const list, const register size_t size, const void* const data) {
 	if (index >= list->length) {
 		
 		size_t* tmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t)),
-			* tttmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
+			* tttmp = (size_t*)realloc(list->ids, (index + 1) * sizeof(size_t));
 		void** ttmp = (void**)realloc(list->data, (index + 1) * sizeof(void*));
 		
 		if (tmp == NULL || ttmp == NULL || tttmp == NULL) {
@@ -28,12 +78,6 @@ extern char placelist(register size_t index, List* const list, const register si
 		
 		register size_t plen = list->length;
 		
-		for (; plen < index + 1; plen++) {
-			list->lengths[plen] = 0;
-			list->data[plen] = NULL;
-			list->ids[plen] = -1;
-		}
-		
 		free(list->lengths);
 		free(list->data);
 		free(list->ids);
@@ -41,6 +85,12 @@ extern char placelist(register size_t index, List* const list, const register si
 		list->lengths = tmp;
 		list->data = ttmp;
 		list->ids = tttmp;
+		
+		for (; plen < list->length; plen++) {
+			list->lengths[plen] = 0;
+			list->data[plen] = NULL;
+			list->ids[plen] = 0;
+		}
 		
 	}
 	
@@ -62,7 +112,7 @@ extern void* rmlist(register size_t index, List* const list) {
 		} else {
 			list->data[index] = NULL;
 			list->lengths[index] = 0;
-			list->ids[index] = -1;
+			list->ids[index] = 0;
 		}
 	}
 	
@@ -74,10 +124,10 @@ extern void* rmlist(register size_t index, List* const list) {
 	return ret;
 }
 
-extern char pushlist(register size_t index, List* const list, const size_t size, const void* const data) {
+extern signed char pushlist(register size_t index, List* const list, const size_t size, const void* const data) {
 	
 	size_t* tmp = (size_t*)realloc(list->lengths, sizeof(size_t) * (list->length + 1)),
-		* tttmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
+		* tttmp = (size_t*)realloc(list->ids, (index + 1) * sizeof(size_t));
 	void** ttmp = (void**)realloc(list->data, sizeof(void*) * (list->length + 1));
 	
 	if (tmp == NULL || ttmp == NULL || tttmp == NULL) {
@@ -132,15 +182,19 @@ extern void singlify(List* const list) {
 	nlen = (size_t*)realloc(nlen, nsize * sizeof(size_t));
 	nnlen = (size_t*)realloc(nnlen, nsize * sizeof(size_t));
 	
+	free(list->data);
+	free(list->lengths);
+	free(list->ids);
+	
 	list->data = ndata;
 	list->length = nsize;
 	list->lengths = nlen;
 	list->ids = nnlen;
 }
 
-extern size_t scanindex(const void* const ptr, const List* const list) {
+extern signed long int scanindex(const void* const ptr, const List* const list) {
 	
-	for (register size_t i = 0; i < list->length; i++) {
+	for (register signed long int i = 0; i < list->length; i++) {
 		if (list->data[i] == ptr) return i;
 	}
 	

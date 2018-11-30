@@ -2,14 +2,20 @@
 #	by:  V. H.
 
 CC=gcc
+RANLIB=ranlib
 CFLAGS=-fPIE
 ARFLAGS=rcs
 targ=$(shell basename $$PWD)
 DEPS=$(targ).h
+LINKS=
 TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
+<<<<<<< HEAD
 LIB=/usr/lib
+=======
+LIB=$(PREFIX)/usr/lib
+>>>>>>> staging
 INC=$(LIB)/../include
 BIN=$(LIB)/../bin
 
@@ -21,16 +27,17 @@ $(targ).o: $(targ).c $(DEPS)
 	$(CC) $(CFLAGS) -c $(targ).c -o $@
 
 lib$(targ).so: $(targ).o
-	$(CC) $(CFLAGS) -shared -o $@ $^
+	$(CC) $(CFLAGS) -shared -o $@ $^ $(LINKS)
 
 lib$(targ).a: $(targ).o
-	$(AR) $(ARFLAGS) $@ $^
+	$(AR) $(ARFLAGS) $@ $^ $(LINKS)
+	$(RANLIB) $@
 
 $(TEST).o: $(TEST).c $(targ).o
-	$(CC) $(CFLAGS) $^ -o $@ $(TSTFLAGS)
+	$(CC) $(CFLAGS) $^ -o $@ $(TSTFLAGS) $(LINKS)
 
 #$(targ): $(BINR) $(targ).o
-#	$(CC) $(CFLAGS) $(BINR) -o $@ -L./ -l$(targ)
+#	$(CC) $(CFLAGS) $(BINR) -o $@ -L./ -l$(targ) $(LINKS)
 
 
 install: lib$(targ).so
@@ -48,6 +55,6 @@ firstinst: FORCE
 	$(shell export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:`pwd`)
 
 pack: *
-	$(shell tar cz -f ../$(targ).tgz ../$(targ))
+	$(shell TAR_MODE=755 tar cz -f ../$(targ).tgz ../$(targ) -p)
 
 FORCE:
