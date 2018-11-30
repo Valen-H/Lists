@@ -6,6 +6,7 @@ extern List makelist(const register size_t length) {
 	List list;
 	list.length = length;
 	list.lengths = (size_t*)calloc(list.length, sizeof(size_t));
+	list.ids = (size_t*)calloc(list.length, sizeof(size_t));
 	list.data = (void**)calloc(list.length, sizeof(void*));
 	
 	return list;
@@ -14,12 +15,14 @@ extern List makelist(const register size_t length) {
 extern char placelist(register size_t index, List* const list, const register size_t size, const void* const data) {
 	if (index >= list->length) {
 		
-		size_t* tmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
+		size_t* tmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t)),
+			* tttmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
 		void** ttmp = (void**)realloc(list->data, (index + 1) * sizeof(void*));
 		
-		if (tmp == NULL || ttmp == NULL) {
+		if (tmp == NULL || ttmp == NULL || tttmp == NULL) {
 			free(tmp);
 			free(ttmp);
+			free(tttmp);
 			return -1;
 		}
 		
@@ -28,13 +31,16 @@ extern char placelist(register size_t index, List* const list, const register si
 		for (; plen < index + 1; plen++) {
 			list->lengths[plen] = 0;
 			list->data[plen] = NULL;
+			list->ids[plen] = -1;
 		}
 		
 		free(list->lengths);
 		free(list->data);
+		free(list->ids);
 		list->length = index + 1;
 		list->lengths = tmp;
 		list->data = ttmp;
+		list->ids = tttmp;
 		
 	}
 	
@@ -52,40 +58,48 @@ extern void* rmlist(register size_t index, List* const list) {
 		if (index + 1 < list->length) {
 			list->data[index] = list->data[index + 1];
 			list->lengths[index] = list->lengths[index + 1];
+			list->ids[index] = list->ids[index + 1];
 		} else {
 			list->data[index] = NULL;
 			list->lengths[index] = 0;
+			list->ids[index] = -1;
 		}
 	}
 	
 	list->length--;
 	list->data = (void**)realloc(list->data, sizeof(void*) * list->length);
 	list->lengths = (size_t*)realloc(list->lengths, sizeof(size_t) * list->length);
+	list->ids = (size_t*)realloc(list->ids, sizeof(size_t) * list->length);
 	
 	return ret;
 }
 
 extern char pushlist(register size_t index, List* const list, const size_t size, const void* const data) {
 	
-	size_t* tmp = (size_t*)realloc(list->lengths, sizeof(size_t) * (list->length + 1));
+	size_t* tmp = (size_t*)realloc(list->lengths, sizeof(size_t) * (list->length + 1)),
+		* tttmp = (size_t*)realloc(list->lengths, (index + 1) * sizeof(size_t));
 	void** ttmp = (void**)realloc(list->data, sizeof(void*) * (list->length + 1));
 	
-	if (tmp == NULL || ttmp == NULL) {
+	if (tmp == NULL || ttmp == NULL || tttmp == NULL) {
 		free(tmp);
 		free(ttmp);
+		free(tttmp);
 		return -1;
 	}
 	
 	list->length++;
 	free(list->lengths);
 	free(list->data);
+	free(list->ids);
 	list->data = ttmp;
 	list->lengths = tmp;
+	list->ids = tttmp;
 
 	if (list->length > 1) {
 		for (register signed long int i = list->length - 2; i >= index; i--) {
 			list->data[i + 1] = list->data[i];
 			list->lengths[i + 1] = list->lengths[i];
+			list->ids[i + 1] = list->ids[i];
 		}
 	}
 	
@@ -96,26 +110,32 @@ extern void singlify(List* const list) {
 	
 	void** ndata = (void**)calloc(list->length, sizeof(void*));
 	register size_t nsize = 0;
-	size_t* nlen = (size_t*)calloc(list->length, sizeof(size_t));
+	size_t* nlen = (size_t*)calloc(list->length, sizeof(size_t)),
+		* nnlen = (size_t*)calloc(list->length, sizeof(size_t));
 	
 	for (register size_t i = 0; i < list->length; i++) {
 		bool pass = true;
 		for (register size_t ii = 0; ii < nsize; ii++) {
-			if (ndata[ii] == list->data[i]) {
+			if (ndata[ii] == list->data[i] && nlen[ii] == list->lengths[i] && nnlen[ii] == list->ids[i]) {
 				pass = false;
 				break;
 			}
 		}
 		if (pass) {
 			ndata[nsize] = list->data[i];
-			nlen[nsize++] = list->lengths[i];
+			nlen[nsize] = list->lengths[i];
+			nnlen[nsize++] = list->ids[i];
 		}
 	}
+	
 	ndata = (void**)realloc(ndata, nsize * sizeof(void*));
 	nlen = (size_t*)realloc(nlen, nsize * sizeof(size_t));
+	nnlen = (size_t*)realloc(nnlen, nsize * sizeof(size_t));
+	
 	list->data = ndata;
 	list->length = nsize;
 	list->lengths = nlen;
+	list->ids = nnlen;
 }
 
 extern size_t scanindex(const void* const ptr, const List* const list) {
