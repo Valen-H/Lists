@@ -11,7 +11,7 @@ LINKS=
 TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
-LIB=/usr/lib
+LIB=$(PREFIX)/usr/lib
 INC=$(LIB)/../include
 BIN=$(LIB)/../bin
 
