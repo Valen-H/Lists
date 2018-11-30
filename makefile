@@ -11,11 +11,7 @@ LINKS=
 TSTFLAGS=-ggdb -DEBUG
 TEST=test
 BINR=bin.c
-<<<<<<< HEAD
-LIB=/usr/lib
-=======
 LIB=$(PREFIX)/usr/lib
->>>>>>> staging
 INC=$(LIB)/../include
 BIN=$(LIB)/../bin
 
